@@ -287,7 +287,7 @@ function ShopLayout({ onLogout }) {
               />
             }/>
 
-            <Route path="reports"  element={<Reports products={products} />} />
+            <Route path="reports"  element={<Reports products={products} vendite={vendite} />} />
 
             <Route path="settings" element={
               <Settings
