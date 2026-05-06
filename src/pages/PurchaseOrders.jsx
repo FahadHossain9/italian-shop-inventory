@@ -67,7 +67,7 @@ export default function PurchaseOrders({ purchaseOrders, onView, onEdit, onCreat
                 <td className="px-4 py-3 text-[11px] font-mono text-stone-600">{po.expected === "—" ? "—" : fmtDateIT(po.expected)}</td>
                 <td className="px-4 py-3"><StatusPill tone={STATUS_TONE[po.status] || "info"}>{po.status}</StatusPill></td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1">
                     <IconBtn title={t("Visualizza","View")} onClick={() => onView(po)}><Eye className="w-3.5 h-3.5" /></IconBtn>
                     <IconBtn title={t("Modifica","Edit")} tone="accent" onClick={() => onEdit(po)}><Edit3 className="w-3.5 h-3.5" /></IconBtn>
                     <IconBtn title={t("Elimina","Delete")} tone="danger" onClick={() => onDelete(po)}><Trash2 className="w-3.5 h-3.5" /></IconBtn>

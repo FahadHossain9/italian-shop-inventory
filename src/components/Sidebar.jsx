@@ -1,8 +1,26 @@
 import React from "react";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
-  ShoppingBag, Truck, MapPin, BarChart3, Settings, Box, HelpCircle,
+  ShoppingBag, Truck, MapPin, BarChart3, Settings, HelpCircle,
 } from "lucide-react";
+
+const BazarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+    {/* Awning */}
+    <path d="M2 9.5L12 4L22 9.5V11.5H2V9.5Z" fill="#1a1a1a"/>
+    <line x1="6"  y1="9.2"  x2="5.2" y2="11.5" stroke="white" strokeWidth="0.9" opacity="0.5"/>
+    <line x1="10" y1="7.2"  x2="9.5" y2="11.5" stroke="white" strokeWidth="0.9" opacity="0.5"/>
+    <line x1="14" y1="7.2"  x2="14.5" y2="11.5" stroke="white" strokeWidth="0.9" opacity="0.5"/>
+    <line x1="18" y1="9.2"  x2="18.8" y2="11.5" stroke="white" strokeWidth="0.9" opacity="0.5"/>
+    {/* Building */}
+    <rect x="3" y="11.5" width="18" height="9.5" fill="#1a1a1a" opacity="0.85"/>
+    {/* Door arch */}
+    <path d="M10 21V17.5C10 16.1 10.9 15.2 12 15.2C13.1 15.2 14 16.1 14 17.5V21Z" fill="#d4a437"/>
+    {/* Windows */}
+    <rect x="4.5" y="13" width="3.5" height="2.5" rx="0.3" fill="#d4a437" opacity="0.55"/>
+    <rect x="16" y="13" width="3.5" height="2.5" rx="0.3" fill="#d4a437" opacity="0.55"/>
+  </svg>
+);
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLang, tx } from "../lang.jsx";
 
@@ -75,7 +93,7 @@ export default function Sidebar() {
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-[#d4a437] flex items-center justify-center flex-shrink-0 shadow-lg"
             style={{ boxShadow: "0 2px 12px rgba(212,164,55,0.4)" }}>
-            <Box className="w-4.5 h-4.5 text-[#1a1a1a]" strokeWidth={2.5} />
+            <BazarIcon />
           </div>
           <div className="min-w-0">
             <div className="font-serif text-[17px] text-stone-50 leading-none tracking-tight"

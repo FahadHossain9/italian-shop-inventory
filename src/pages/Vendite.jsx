@@ -1,9 +1,55 @@
 import React, { useState, useMemo } from "react";
-import { Plus, Eye, Edit3, Trash2, ShoppingBag, DollarSign, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Plus, Eye, Edit3, Trash2, ShoppingBag, DollarSign, TrendingUp, CheckCircle2, Printer } from "lucide-react";
 import { useLang, tx } from "../lang.jsx";
 import { StatusPill, KpiCard, IconBtn } from "../ui.jsx";
 import { fmtEur, fmtEurShort, fmtDateIT } from "../helpers.js";
 import { PAYMENT_CHANNELS } from "../data.js";
+
+function printDocumento(v) {
+  const linesHtml = (v.lines || []).map((l) =>
+    `<tr><td>${l.sku}</td><td>${l.product}</td><td style="text-align:right">${l.qty}</td><td style="text-align:right">${fmtEur(l.price)}</td><td style="text-align:right">${fmtEur(l.qty * l.price)}</td></tr>`
+  ).join("");
+  const html = `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"/>
+  <title>Documento ${v.id}</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Courier New',monospace;font-size:12px;color:#111;padding:28px 36px;max-width:620px;margin:0 auto}
+    .header{text-align:center;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:16px}
+    .shop{font-size:18px;font-weight:bold;letter-spacing:0.06em}
+    .sub{font-size:10px;color:#555;margin-top:3px}
+    .doc-title{font-size:13px;font-weight:bold;text-transform:uppercase;letter-spacing:0.15em;margin:14px 0 8px}
+    .meta{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:14px}
+    table{width:100%;border-collapse:collapse;margin:10px 0}
+    th{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;text-align:left;padding:4px 6px;background:#f0f0f0;border-bottom:1px solid #ccc}
+    th:last-child,td:last-child{text-align:right}
+    td{padding:5px 6px;border-bottom:1px solid #eee;font-size:11px}
+    .total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:bold;margin-top:14px;padding-top:10px;border-top:2px solid #111}
+    .channel{display:inline-block;border:1px solid #999;padding:1px 8px;font-size:10px;letter-spacing:0.08em;margin-top:6px}
+    .footer{margin-top:28px;font-size:9px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:8px}
+    @media print{body{padding:12px}}
+  </style></head><body>
+  <div class="header">
+    <div class="shop">AL BAZAR DI MILANO</div>
+    <div class="sub">Via Padova 104 · 20127 Milano · P.IVA 12345678901</div>
+    <div class="sub">Tel: +39 02 1234567</div>
+  </div>
+  <div class="doc-title">Documento Commerciale Non Fiscale</div>
+  <div class="meta">
+    <span>N°: <strong>${v.id}</strong></span>
+    <span>Data: <strong>${v.date}</strong></span>
+    <span>Cliente: <strong>${v.customer || "Walk-in"}</strong></span>
+  </div>
+  <table>
+    <thead><tr><th>SKU</th><th>Prodotto</th><th>Qtà</th><th>Prezzo</th><th>Totale</th></tr></thead>
+    <tbody>${linesHtml || `<tr><td colspan="5" style="text-align:center;color:#999">—</td></tr>`}</tbody>
+  </table>
+  <div class="total-row"><span>TOTALE</span><span>${fmtEur(v.total)}</span></div>
+  <div style="margin-top:8px"><span class="channel">${v.channel}</span></div>
+  <div class="footer">Documento non fiscale · Al Bazar Shop Manager · ${new Date().toLocaleDateString("it-IT")}</div>
+  </body></html>`;
+  const win = window.open("", "_blank", "width=680,height=860");
+  if (win) { win.document.write(html); win.document.close(); win.print(); }
+}
 
 const STATUS_TONE = { completata: "ok", "in consegna": "accent", "in elaborazione": "warning", annullata: "critical" };
 
@@ -168,7 +214,8 @@ export default function Vendite({ vendite, onView, onEdit, onCreate, onDelete })
                   <td className="px-4 py-3 text-[11px] font-mono text-stone-600">{fmtDateIT(v.date)}</td>
                   <td className="px-4 py-3"><StatusPill tone={STATUS_TONE[v.status] || "info"}>{v.status}</StatusPill></td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1">
+                      <IconBtn title={t("Stampa Documento","Print Receipt")} onClick={() => printDocumento(v)}><Printer className="w-3.5 h-3.5" /></IconBtn>
                       <IconBtn title={t("Visualizza","View")} onClick={() => onView(v)}><Eye className="w-3.5 h-3.5" /></IconBtn>
                       <IconBtn title={t("Modifica","Edit")} tone="accent" onClick={() => onEdit(v)}><Edit3 className="w-3.5 h-3.5" /></IconBtn>
                       <IconBtn title={t("Elimina","Delete")} tone="danger" onClick={() => onDelete(v)}><Trash2 className="w-3.5 h-3.5" /></IconBtn>

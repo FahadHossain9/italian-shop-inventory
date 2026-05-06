@@ -156,7 +156,7 @@ export default function Products({ products, onView, onEdit, onCreate, onDelete 
                     <StatusPill tone={status.tone}>{t(status.label, status.labelEn)}</StatusPill>
                   </td>
                   <td className="px-3 py-3">
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1">
                       <IconBtn title={t("Visualizza","View")}   onClick={() => onView(p)}><Eye    className="w-3.5 h-3.5" /></IconBtn>
                       <IconBtn title={t("Modifica","Edit")}     tone="accent" onClick={() => onEdit(p)}><Edit3  className="w-3.5 h-3.5" /></IconBtn>
                       <IconBtn title={t("Elimina","Delete")}    tone="danger" onClick={() => onDelete(p)}><Trash2 className="w-3.5 h-3.5" /></IconBtn>

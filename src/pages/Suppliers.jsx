@@ -26,7 +26,7 @@ export default function Suppliers({ suppliers, onView, onEdit, onCreate, onDelet
         {suppliers.map((s) => (
           <div key={s.id} className="bg-white border border-stone-300 p-5 hover:border-stone-400 transition-colors group relative">
             {/* Actions */}
-            <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+            <div className="absolute top-3 right-3 flex items-center gap-1">
               <IconBtn title={t("Visualizza","View")} onClick={() => onView(s)}><Eye className="w-3.5 h-3.5" /></IconBtn>
               <IconBtn title={t("Modifica","Edit")} tone="accent" onClick={() => onEdit(s)}><Edit3 className="w-3.5 h-3.5" /></IconBtn>
               <IconBtn title={t("Elimina","Delete")} tone="danger" onClick={() => onDelete(s)}><Trash2 className="w-3.5 h-3.5" /></IconBtn>

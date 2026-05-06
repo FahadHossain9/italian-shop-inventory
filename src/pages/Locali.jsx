@@ -36,14 +36,17 @@ export default function Locali({ locations, onView, onEdit, onCreate, onDelete }
           const TIcon = typeInfo.Icon;
           return (
             <div key={l.id} className="bg-white border border-stone-300 p-6 group relative">
-              <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity z-10">
+              <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
                 <IconBtn title={t("Visualizza","View")} onClick={() => onView(l)}><Eye className="w-3.5 h-3.5" /></IconBtn>
                 <IconBtn title={t("Modifica","Edit")} tone="accent" onClick={() => onEdit(l)}><Edit3 className="w-3.5 h-3.5" /></IconBtn>
                 <IconBtn title={t("Elimina","Delete")} tone="danger" onClick={() => onDelete(l)}><Trash2 className="w-3.5 h-3.5" /></IconBtn>
               </div>
 
-              <div className="flex items-start justify-between mb-5">
-                <div>
+              <div className="flex items-start gap-4 mb-5">
+                <div className={`w-12 h-12 ${typeInfo.color} flex items-center justify-center flex-shrink-0`}>
+                  <TIcon className="w-5 h-5 text-white" strokeWidth={1.5} />
+                </div>
+                <div className="flex-1 min-w-0 pr-20">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-500">{l.id}</span>
                     <span className="w-1 h-1 rounded-full bg-stone-400" />
@@ -60,9 +63,6 @@ export default function Locali({ locations, onView, onEdit, onCreate, onDelete }
                   <div className="flex items-center gap-1.5 text-[12px] text-stone-600 mt-1">
                     <MapPin className="w-3 h-3" /> {l.address}, {l.city}
                   </div>
-                </div>
-                <div className={`w-12 h-12 ${typeInfo.color} flex items-center justify-center flex-shrink-0`}>
-                  <TIcon className="w-5 h-5 text-white" strokeWidth={1.5} />
                 </div>
               </div>
 
