@@ -18,10 +18,10 @@ function subtractMonths(n) {
 }
 
 const RANGES = [
-  { id: "7gg",  label: "7 Giorni",  start: () => subtractDays(6),   prevStart: () => subtractDays(13), prevEnd: () => subtractDays(7)  },
-  { id: "30gg", label: "30 Giorni", start: () => subtractDays(29),  prevStart: () => subtractDays(59), prevEnd: () => subtractDays(30) },
-  { id: "3m",   label: "3 Mesi",   start: () => subtractMonths(3), prevStart: () => subtractMonths(6), prevEnd: () => subtractMonths(3) },
-  { id: "all",  label: "Tutto",    start: () => "2000-01-01",       prevStart: null, prevEnd: null },
+  { id: "7gg",  it: "7 Giorni",  en: "7 Days",    start: () => subtractDays(6),   prevStart: () => subtractDays(13), prevEnd: () => subtractDays(7)  },
+  { id: "30gg", it: "30 Giorni", en: "30 Days",   start: () => subtractDays(29),  prevStart: () => subtractDays(59), prevEnd: () => subtractDays(30) },
+  { id: "3m",   it: "3 Mesi",   en: "3 Months",  start: () => subtractMonths(3), prevStart: () => subtractMonths(6), prevEnd: () => subtractMonths(3) },
+  { id: "all",  it: "Tutto",    en: "All Time",   start: () => "2000-01-01",       prevStart: null, prevEnd: null },
 ];
 
 // ── Group vendite into chart buckets ─────────────────────────────────────────
@@ -124,7 +124,7 @@ function printReport(products, topSellers, healthStats, periodLabel, catLabel, t
   if (win) { win.document.write(html); win.document.close(); win.print(); }
 }
 
-const TOP_N_OPTIONS = [{ label: "Top 5", value: 5 }, { label: "Top 10", value: 10 }, { label: "Tutti", value: 99 }];
+const TOP_N_OPTIONS = [{ it: "Top 5", en: "Top 5", value: 5 }, { it: "Top 10", en: "Top 10", value: 10 }, { it: "Tutti", en: "All", value: 99 }];
 
 export default function Reports({ products, vendite = [] }) {
   const { lang } = useLang();
@@ -225,13 +225,13 @@ export default function Reports({ products, vendite = [] }) {
     [products, catFilter]);
 
   const healthStats = useMemo(() => [
-    { it: "Disponibili",  count: filteredProducts.filter((p) => getStockStatus(p).tone === "ok").length,       color: "bg-emerald-500", textColor: "text-emerald-800" },
-    { it: "Scorta Bassa", count: filteredProducts.filter((p) => getStockStatus(p).tone === "warning").length,  color: "bg-amber-500",   textColor: "text-amber-800"   },
-    { it: "Esauriti",     count: filteredProducts.filter((p) => getStockStatus(p).tone === "critical").length, color: "bg-rose-500",    textColor: "text-rose-800"    },
+    { it: "Disponibili",  en: "In Stock",     count: filteredProducts.filter((p) => getStockStatus(p).tone === "ok").length,       color: "bg-emerald-500", textColor: "text-emerald-800" },
+    { it: "Scorta Bassa", en: "Low Stock",    count: filteredProducts.filter((p) => getStockStatus(p).tone === "warning").length,  color: "bg-amber-500",   textColor: "text-amber-800"   },
+    { it: "Esauriti",     en: "Out of Stock", count: filteredProducts.filter((p) => getStockStatus(p).tone === "critical").length, color: "bg-rose-500",    textColor: "text-rose-800"    },
   ], [filteredProducts]);
 
-  const stockValue = filteredProducts.reduce((s, p) => s + p.stock * p.cost, 0);
-  const periodLabel = range.label;
+  const stockValue  = filteredProducts.reduce((s, p) => s + p.stock * p.cost, 0);
+  const periodLabel = t(range.it, range.en);
   const catLabel    = catFilter !== "all" ? catFilter : "";
 
   return (
@@ -240,7 +240,7 @@ export default function Reports({ products, vendite = [] }) {
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div className="text-[12px] text-stone-500 font-mono">
-          {filteredProducts.length} SKU{catLabel ? ` · ${catLabel}` : ""} · {periodSales.length} vendite nel periodo
+          {filteredProducts.length} SKU{catLabel ? ` · ${catLabel}` : ""} · {periodSales.length} {t("vendite nel periodo","sales in period")}
         </div>
         <button
           onClick={() => printReport(products, topSellers, healthStats, periodLabel, catLabel, totalRev, totalCost, margin, marginDelta)}
@@ -258,7 +258,7 @@ export default function Reports({ products, vendite = [] }) {
           {RANGES.map((r) => (
             <button key={r.id} onClick={() => setRangeId(r.id)}
               className={`px-3 py-1.5 text-[11px] font-mono transition-colors ${rangeId === r.id ? "bg-stone-900 text-stone-50" : "text-stone-600 hover:bg-stone-100"}`}>
-              {r.label}
+              {t(r.it, r.en)}
             </button>
           ))}
         </div>
@@ -266,14 +266,14 @@ export default function Reports({ products, vendite = [] }) {
         {/* Category */}
         <select value={catFilter} onChange={(e) => setCatFilter(e.target.value)}
           className="px-3 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 font-mono">
-          <option value="all">Tutte le categorie</option>
+          <option value="all">{t("Tutte le categorie","All categories")}</option>
           {categories.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
 
         {/* Top N */}
         <select value={topN} onChange={(e) => setTopN(Number(e.target.value))}
           className="px-3 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 font-mono">
-          {TOP_N_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          {TOP_N_OPTIONS.map((o) => <option key={o.value} value={o.value}>{t(o.it, o.en)}</option>)}
         </select>
 
         {catFilter !== "all" && (
@@ -287,10 +287,10 @@ export default function Reports({ products, vendite = [] }) {
       {/* ── KPI row ────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-4 gap-4">
         {[
-          { label: "Ricavi Periodo",  value: fmtEurShort(totalRev),  sub: revDelta !== null ? `${revDelta >= 0 ? "+" : ""}${revDelta.toFixed(1)}% vs periodo prec.` : "tutto il periodo", deltaUp: revDelta === null || revDelta >= 0 },
-          { label: "Costi Acquisto",  value: fmtEurShort(totalCost), sub: "stimati da listino", deltaUp: true },
-          { label: "Utile Lordo",     value: fmtEurShort(totalRev - totalCost), sub: "ricavi − costi", deltaUp: totalRev >= totalCost },
-          { label: "Margine Lordo",   value: `${margin.toFixed(1)}%`, sub: marginDelta !== 0 ? `${marginDelta >= 0 ? "+" : ""}${marginDelta.toFixed(1)}pp vs periodo prec.` : "—", deltaUp: marginDelta >= 0 },
+          { label: t("Ricavi Periodo","Period Revenue"),  value: fmtEurShort(totalRev),  sub: revDelta !== null ? `${revDelta >= 0 ? "+" : ""}${revDelta.toFixed(1)}% ${t("vs periodo prec.","vs prev period")}` : t("tutto il periodo","all time"), deltaUp: revDelta === null || revDelta >= 0 },
+          { label: t("Costi Acquisto","Purchase Costs"),  value: fmtEurShort(totalCost), sub: t("stimati da listino","estimated from list"), deltaUp: true },
+          { label: t("Utile Lordo","Gross Profit"),       value: fmtEurShort(totalRev - totalCost), sub: t("ricavi − costi","revenue − costs"), deltaUp: totalRev >= totalCost },
+          { label: t("Margine Lordo","Gross Margin"),     value: `${margin.toFixed(1)}%`, sub: marginDelta !== 0 ? `${marginDelta >= 0 ? "+" : ""}${marginDelta.toFixed(1)}pp ${t("vs periodo prec.","vs prev period")}` : "—", deltaUp: marginDelta >= 0 },
         ].map((k) => (
           <div key={k.label} className="bg-white border border-stone-300 p-5">
             <div className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-500">{k.label}</div>
@@ -304,11 +304,11 @@ export default function Reports({ products, vendite = [] }) {
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2 bg-white border border-stone-300 p-6">
           <SectionLabel>
-            Ricavi per Periodo{catLabel ? ` · ${catLabel}` : ""} — {periodLabel}
+            {t("Ricavi per Periodo","Revenue by Period")}{catLabel ? ` · ${catLabel}` : ""} — {periodLabel}
           </SectionLabel>
           {chartData.length === 0 || chartData.every((d) => d.ricavi === 0) ? (
             <div className="h-[260px] flex items-center justify-center text-[12px] text-stone-500 font-mono">
-              Nessuna vendita in questo periodo.
+              {t("Nessuna vendita in questo periodo.","No sales in this period.")}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
@@ -319,7 +319,7 @@ export default function Reports({ products, vendite = [] }) {
                 <Tooltip
                   contentStyle={{ background: "#1a1a1a", border: "none", color: "#fff", fontSize: 12, fontFamily: "monospace" }}
                   cursor={{ fill: "rgba(212, 164, 55, 0.06)" }}
-                  formatter={(v) => [fmtEur(v), "Ricavi"]}
+                  formatter={(v) => [fmtEur(v), t("Ricavi","Revenue")]}
                 />
                 <Bar dataKey="ricavi" fill="#1a1a1a" radius={[2, 2, 0, 0]} />
               </BarChart>
@@ -329,28 +329,28 @@ export default function Reports({ products, vendite = [] }) {
 
         {/* Margin card */}
         <div className="bg-white border border-stone-300 p-6">
-          <SectionLabel>Margine di Guadagno</SectionLabel>
+          <SectionLabel>{t("Margine di Guadagno","Profit Margin")}</SectionLabel>
           <div className="text-center py-3">
             <div className="font-serif text-[52px] text-stone-900 leading-none tracking-tight" style={{ fontFamily: "'Fraunces', serif", fontWeight: 400 }}>
               {totalRev > 0 ? `${margin.toFixed(1)}%` : "—"}
             </div>
             <div className="text-[11px] uppercase tracking-[0.18em] font-mono text-stone-500 mt-2">
-              Margine Lordo · {periodLabel}
+              {t("Margine Lordo","Gross Margin")} · {periodLabel}
             </div>
             {rangeId !== "all" && (
               <div className={`inline-flex items-center gap-1 mt-3 px-2.5 py-1 text-[11px] font-mono border ${marginDelta >= 0 ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-rose-50 border-rose-200 text-rose-800"}`}>
                 {marginDelta >= 0
                   ? <ArrowUpRight className="w-3 h-3" strokeWidth={2.5} />
                   : <ArrowDownRight className="w-3 h-3" strokeWidth={2.5} />}
-                {marginDelta >= 0 ? "+" : ""}{marginDelta.toFixed(1)}pp vs periodo prec.
+                {marginDelta >= 0 ? "+" : ""}{marginDelta.toFixed(1)}pp {t("vs periodo prec.","vs prev period")}
               </div>
             )}
           </div>
           <div className="mt-4 pt-4 border-t border-stone-200 space-y-2.5">
             {[
-              { label: "Ricavi",         val: fmtEur(totalRev),                       bold: false },
-              { label: "Costi Acquisto", val: fmtEur(totalCost),                      bold: false },
-              { label: "Utile Lordo",    val: fmtEur(totalRev - totalCost),           bold: true, green: true },
+              { label: t("Ricavi","Revenue"),         val: fmtEur(totalRev),                 bold: false },
+              { label: t("Costi Acquisto","Purchase Costs"), val: fmtEur(totalCost),         bold: false },
+              { label: t("Utile Lordo","Gross Profit"), val: fmtEur(totalRev - totalCost),   bold: true, green: true },
             ].map((row) => (
               <div key={row.label} className={`flex justify-between text-[12px] ${row.bold ? "pt-2 border-t border-stone-200" : ""}`}>
                 <span className={row.bold ? "text-stone-800 font-semibold" : "text-stone-600"}>{row.label}</span>
@@ -365,11 +365,11 @@ export default function Reports({ products, vendite = [] }) {
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white border border-stone-300 p-6">
           <SectionLabel>
-            Prodotti Più Venduti · {periodLabel}
+            {t("Prodotti Più Venduti","Top-Selling Products")} · {periodLabel}
             {catLabel && <span className="ml-2 text-[10px] font-mono text-stone-400 normal-case tracking-normal">{catLabel}</span>}
           </SectionLabel>
           {topSellers.length === 0 ? (
-            <div className="py-8 text-center text-[12px] text-stone-500 font-mono">Nessuna vendita in questo periodo.</div>
+            <div className="py-8 text-center text-[12px] text-stone-500 font-mono">{t("Nessuna vendita in questo periodo.","No sales in this period.")}</div>
           ) : (
             <div className="space-y-2.5">
               {topSellers.map((s, i) => (
@@ -393,7 +393,7 @@ export default function Reports({ products, vendite = [] }) {
 
         <div className="bg-white border border-stone-300 p-6">
           <SectionLabel>
-            Salute del Magazzino
+            {t("Salute del Magazzino","Inventory Health")}
             {catLabel && <span className="ml-2 text-[10px] font-mono text-stone-400 normal-case tracking-normal">{catLabel}</span>}
           </SectionLabel>
           <div className="space-y-3 mt-2">
@@ -402,7 +402,7 @@ export default function Reports({ products, vendite = [] }) {
               return (
                 <div key={row.it}>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[12px] text-stone-700">{row.it}</span>
+                    <span className="text-[12px] text-stone-700">{t(row.it, row.en)}</span>
                     <span className={`text-[13px] font-mono font-semibold ${row.textColor}`}>
                       {row.count} <span className="text-stone-400 font-normal">/ {filteredProducts.length}</span>
                     </span>
@@ -416,11 +416,11 @@ export default function Reports({ products, vendite = [] }) {
           </div>
           <div className="mt-6 pt-5 border-t border-stone-200 grid grid-cols-2 gap-4">
             <div>
-              <div className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-500">Valore Magazzino</div>
+              <div className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-500">{t("Valore Magazzino","Stock Value")}</div>
               <div className="text-[22px] font-mono font-semibold text-stone-900 mt-1">{fmtEurShort(stockValue)}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-500">Prodotti</div>
+              <div className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-500">{t("Prodotti","Products")}</div>
               <div className="text-[22px] font-mono font-semibold text-stone-900 mt-1">{filteredProducts.length} SKU</div>
             </div>
           </div>
