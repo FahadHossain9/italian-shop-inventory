@@ -1,0 +1,221 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="og-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#0D0C09"/>
+      <stop offset="100%" stop-color="#141008"/>
+    </linearGradient>
+    <!-- Gold text gradient -->
+    <linearGradient id="og-gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#b8862f"/>
+      <stop offset="40%"  stop-color="#f0c84a"/>
+      <stop offset="100%" stop-color="#d4a437"/>
+    </linearGradient>
+    <!-- Radial glow -->
+    <radialGradient id="og-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#d4a437" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#d4a437" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Sky gradient for facade -->
+    <linearGradient id="og-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#C8E0F0"/>
+      <stop offset="100%" stop-color="#EAD8C0"/>
+    </linearGradient>
+    <!-- Awning clip -->
+    <clipPath id="og-awn">
+      <polygon points="115,235 485,235 510,280 90,280"/>
+    </clipPath>
+  </defs>
+
+  <!-- Main background -->
+  <rect width="1200" height="630" fill="url(#og-bg)"/>
+
+  <!-- Subtle dot-grid overlay -->
+  <pattern id="og-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="20" cy="20" r="1" fill="#d4a437" opacity="0.06"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#og-grid)"/>
+
+  <!-- Gold radial glow centered -->
+  <ellipse cx="600" cy="315" rx="480" ry="280" fill="url(#og-glow)"/>
+
+  <!-- ─────────── LEFT SIDE: Italian shop facade (x 0–560) ─────────────────── -->
+
+  <!-- Sky background for scene -->
+  <rect x="0" y="0" width="560" height="630" fill="url(#og-sky)" opacity="0.15"/>
+
+  <!-- Left flanking building -->
+  <rect x="20"  y="140" width="115" height="490" fill="#CC8B5A" opacity="0.85"/>
+  <rect x="20"  y="130" width="115" height="16"  fill="#B87B4A" opacity="0.85"/>
+  <!-- Left building windows -->
+  <rect x="32"  y="165" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.5"/>
+  <rect x="68"  y="165" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.5"/>
+  <rect x="32"  y="225" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.4"/>
+  <rect x="68"  y="225" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.4"/>
+  <!-- Left shutters -->
+  <rect x="32"  y="195" width="14" height="10" fill="#2D5A3D" opacity="0.7"/>
+  <rect x="46"  y="195" width="14" height="10" fill="#2D5A3D" opacity="0.7"/>
+  <rect x="68"  y="195" width="14" height="10" fill="#2D5A3D" opacity="0.7"/>
+  <rect x="82"  y="195" width="14" height="10" fill="#2D5A3D" opacity="0.7"/>
+
+  <!-- Right flanking building -->
+  <rect x="425" y="120" width="115" height="510" fill="#D4A455" opacity="0.85"/>
+  <rect x="425" y="110" width="115" height="16"  fill="#C09040" opacity="0.85"/>
+  <rect x="435" y="148" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.5"/>
+  <rect x="472" y="148" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.5"/>
+  <rect x="435" y="210" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.4"/>
+  <rect x="472" y="210" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.4"/>
+  <rect x="435" y="272" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.35"/>
+  <rect x="472" y="272" width="28" height="40" rx="2" fill="#A8CDD8" opacity="0.35"/>
+
+  <!-- Central shop facade -->
+  <rect x="125" y="185" width="290" height="445" fill="#F5EDD8" opacity="0.9"/>
+  <rect x="125" y="185" width="14"  height="445" fill="#1A1A1A" opacity="0.06"/>
+  <rect x="401" y="185" width="14"  height="445" fill="#1A1A1A" opacity="0.06"/>
+
+  <!-- Shop sign board -->
+  <rect x="165" y="148" width="210" height="56" rx="3" fill="#0D0C09"/>
+  <rect x="168" y="151" width="204" height="50" rx="2" fill="none" stroke="#d4a437" stroke-width="1.8" opacity="0.7"/>
+  <text x="270" y="181" fill="#d4a437" font-size="22" font-family="Georgia,serif" text-anchor="middle" font-weight="bold" letter-spacing="6">AL BAZAR</text>
+  <text x="270" y="194" fill="#8B7B60" font-size="9" text-anchor="middle" font-family="monospace" letter-spacing="2">VIA PADOVA 104 · MILANO</text>
+
+  <!-- Awning -->
+  <polygon points="115,235 485,235 510,280 90,280" fill="#2D6A4F"/>
+  <g clip-path="url(#og-awn)">
+    <rect x="93"  y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="138" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="183" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="228" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="273" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="318" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="363" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="408" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+    <rect x="453" y="232" width="22" height="52" fill="#F5EDD8" opacity="0.22"/>
+  </g>
+  <!-- Scalloped valance -->
+  <path d="M90,280 Q107,300 124,280 Q141,300 158,280 Q175,300 192,280 Q209,300 226,280 Q243,300 260,280 Q277,300 294,280 Q311,300 328,280 Q345,300 362,280 Q379,300 396,280 Q413,300 430,280 Q447,300 464,280 Q481,300 498,280 Q515,300 510,280" fill="#1B4332"/>
+
+  <!-- Shop window (left panel) -->
+  <rect x="137" y="295" width="150" height="140" fill="#D4EEF8" opacity="0.75"/>
+  <rect x="137" y="295" width="150" height="140" fill="none" stroke="#C8B898" stroke-width="2.5"/>
+  <line x1="212" y1="295" x2="212" y2="435" stroke="#C8B898" stroke-width="2"/>
+  <line x1="137" y1="368" x2="287" y2="368" stroke="#C8B898" stroke-width="2"/>
+  <!-- Products in window -->
+  <rect x="148" y="307" width="14" height="48" rx="7" fill="#D4B44A" opacity="0.88"/>
+  <rect x="168" y="312" width="30" height="40" rx="4" fill="#E8D4A8" opacity="0.85"/>
+  <rect x="220" y="308" width="20" height="48" rx="2" fill="#F5C842" opacity="0.85"/>
+  <rect x="245" y="312" width="24" height="42" rx="3" fill="#E85A3A" opacity="0.78"/>
+  <!-- Fruit row bottom -->
+  <circle cx="150" cy="405" r="12" fill="#FF7B35" opacity="0.88"/>
+  <circle cx="175" cy="408" r="11" fill="#FF5050" opacity="0.88"/>
+  <circle cx="198" cy="406" r="12" fill="#FFD700" opacity="0.88"/>
+  <circle cx="222" cy="408" r="11" fill="#78C850" opacity="0.88"/>
+  <circle cx="245" cy="406" r="12" fill="#FF7B35" opacity="0.88"/>
+  <circle cx="268" cy="408" r="10" fill="#E83A2A" opacity="0.88"/>
+
+  <!-- Door (arch) -->
+  <path d="M305 630 L305 350 Q340 320 375 350 L375 630 Z" fill="#4A3020"/>
+  <rect x="312" y="365" width="22" height="38" rx="2" fill="#5A4030"/>
+  <rect x="340" y="365" width="22" height="38" rx="2" fill="#5A4030"/>
+  <rect x="312" y="412" width="22" height="34" rx="2" fill="#5A4030"/>
+  <rect x="340" y="412" width="22" height="34" rx="2" fill="#5A4030"/>
+  <circle cx="333" cy="420" r="6" fill="#d4a437"/>
+  <path d="M305 350 Q340 320 375 350 Z" fill="#A8CDD8" opacity="0.7"/>
+
+  <!-- APERTO badge -->
+  <rect x="308" y="333" width="64" height="18" rx="3" fill="#2D6A4F" opacity="0.92"/>
+  <text x="340" y="345" fill="#F5EDD8" font-size="9" text-anchor="middle" font-family="monospace" letter-spacing="1.5">APERTO</text>
+
+  <!-- Ground -->
+  <rect x="0" y="580" width="560" height="50" fill="#7A6B5A" opacity="0.6"/>
+
+  <!-- Crates in foreground -->
+  <rect x="30"  y="548" width="80" height="36" rx="2" fill="#8B6B3A" opacity="0.9"/>
+  <circle cx="50"  cy="542" r="10" fill="#FF7B35"/>
+  <circle cx="66"  cy="542" r="10" fill="#FF9040"/>
+  <circle cx="82"  cy="542" r="10" fill="#FF7B35"/>
+  <circle cx="97"  cy="542" r="9"  fill="#FF5050"/>
+  <rect x="118" y="554" width="65" height="30" rx="2" fill="#8B6B3A" opacity="0.9"/>
+  <circle cx="132" cy="548" r="8" fill="#E83A2A"/>
+  <circle cx="148" cy="548" r="8" fill="#E83A2A"/>
+  <circle cx="164" cy="548" r="8" fill="#E83A2A"/>
+  <circle cx="178" cy="548" r="8" fill="#FFD700"/>
+
+  <!-- String lights -->
+  <path d="M20,140 Q280,120 540,110" stroke="#d4a437" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <circle cx="50"  cy="133" r="4.5" fill="#F5D870" opacity="0.8"/>
+  <circle cx="110" cy="128" r="4.5" fill="#F5D870" opacity="0.8"/>
+  <circle cx="175" cy="124" r="4.5" fill="#F5D870" opacity="0.8"/>
+  <circle cx="240" cy="122" r="4.5" fill="#F5D870" opacity="0.8"/>
+  <circle cx="305" cy="120" r="4.5" fill="#F5D870" opacity="0.8"/>
+  <circle cx="370" cy="118" r="4.5" fill="#F5D870" opacity="0.8"/>
+  <circle cx="435" cy="116" r="4.5" fill="#F5D870" opacity="0.8"/>
+  <circle cx="500" cy="113" r="4.5" fill="#F5D870" opacity="0.8"/>
+
+  <!-- Hanging garlic -->
+  <line x1="190" y1="280" x2="190" y2="302" stroke="#8B7B5A" stroke-width="1.5"/>
+  <ellipse cx="185" cy="305" rx="6" ry="7" fill="#F5EDD8" stroke="#C8B8A0" stroke-width="1"/>
+  <ellipse cx="195" cy="308" rx="5" ry="6" fill="#F5EDD8" stroke="#C8B8A0" stroke-width="1"/>
+  <!-- Hanging salami -->
+  <line x1="230" y1="280" x2="230" y2="294" stroke="#8B7B5A" stroke-width="1.5"/>
+  <rect x="222" y="294" width="16" height="36" rx="8" fill="#8B3A2A"/>
+
+  <!-- ─────────── VERTICAL DIVIDER ──────────────────────────────────────────── -->
+  <line x1="580" y1="60" x2="580" y2="570" stroke="#d4a437" stroke-width="1" opacity="0.2"/>
+
+  <!-- ─────────── RIGHT SIDE: Brand copy (x 620–1160) ──────────────────────── -->
+
+  <!-- Logo mark -->
+  <rect x="640" y="90" width="52" height="52" fill="#d4a437"/>
+  <!-- Box icon inside logo -->
+  <rect x="651" y="113" width="30" height="20" rx="2" fill="#1a1a1a"/>
+  <path d="M651 113 L666 106 L681 113" fill="#2a2a2a" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="666" y1="106" x2="666" y2="113" stroke="#d4a437" stroke-width="1.2" opacity="0.5"/>
+  <line x1="651" y1="119" x2="681" y2="119" stroke="#d4a437" stroke-width="1" opacity="0.35"/>
+  <circle cx="666" cy="119" r="2" fill="#d4a437" opacity="0.6"/>
+
+  <!-- App name -->
+  <text x="706" y="121" fill="#F5F0E8" font-size="28" font-family="Georgia,serif" font-weight="500" letter-spacing="1">Al Bazar</text>
+  <text x="706" y="138" fill="#6B5B4A" font-size="11" font-family="monospace" letter-spacing="3">SHOP MANAGER</text>
+
+  <!-- Divider -->
+  <line x1="640" y1="168" x2="1140" y2="168" stroke="#d4a437" stroke-width="1" opacity="0.25"/>
+
+  <!-- Main headline -->
+  <text x="640" y="235" font-size="58" font-family="Georgia,serif" font-weight="400" fill="url(#og-gold)" letter-spacing="-1">Gestisci il tuo</text>
+  <text x="640" y="302" font-size="58" font-family="Georgia,serif" font-weight="400" fill="url(#og-gold)" letter-spacing="-1">negozio con</text>
+  <text x="640" y="369" font-size="58" font-family="Georgia,serif" font-weight="400" fill="#F5F0E8"  letter-spacing="-1">eleganza.</text>
+
+  <!-- Tagline -->
+  <text x="640" y="415" fill="#6B5B4A" font-size="18" font-family="sans-serif" font-weight="400">Inventario · Vendite · Corrispettivi · Fornitori</text>
+
+  <!-- Feature pills -->
+  <rect x="640" y="440" width="130" height="32" rx="2" fill="#161410" stroke="#2A2520" stroke-width="1"/>
+  <text x="705" y="461" fill="#d4a437" font-size="11" text-anchor="middle" font-family="monospace" letter-spacing="1">IVA 4·10·22%</text>
+
+  <rect x="782" y="440" width="118" height="32" rx="2" fill="#161410" stroke="#2A2520" stroke-width="1"/>
+  <text x="841" y="461" fill="#d4a437" font-size="11" text-anchor="middle" font-family="monospace" letter-spacing="1">CORRISPETTIVI</text>
+
+  <rect x="912" y="440" width="100" height="32" rx="2" fill="#161410" stroke="#2A2520" stroke-width="1"/>
+  <text x="962" y="461" fill="#d4a437" font-size="11" text-anchor="middle" font-family="monospace" letter-spacing="1">SATISPAY</text>
+
+  <rect x="1024" y="440" width="116" height="32" rx="2" fill="#161410" stroke="#2A2520" stroke-width="1"/>
+  <text x="1082" y="461" fill="#d4a437" font-size="11" text-anchor="middle" font-family="monospace" letter-spacing="1">IT · EN · 🌐</text>
+
+  <!-- Divider bottom -->
+  <line x1="640" y1="500" x2="1140" y2="500" stroke="#d4a437" stroke-width="1" opacity="0.2"/>
+
+  <!-- Location + URL -->
+  <circle cx="652" cy="526" r="4" fill="#d4a437" opacity="0.6"/>
+  <text x="664" y="531" fill="#4A3A2A" font-size="14" font-family="monospace" letter-spacing="1">Via Padova 104 · Milano · Italia</text>
+
+  <text x="1140" y="531" fill="#3A3020" font-size="13" font-family="monospace" text-anchor="end" letter-spacing="1">albazar.shop</text>
+
+  <!-- Outer border frame -->
+  <rect x="1" y="1" width="1198" height="628" rx="0" fill="none" stroke="#d4a437" stroke-width="1.5" opacity="0.15"/>
+  <!-- Corner accents -->
+  <path d="M1,1 L40,1 M1,1 L1,40"   stroke="#d4a437" stroke-width="2" opacity="0.5"/>
+  <path d="M1199,1 L1160,1 M1199,1 L1199,40"   stroke="#d4a437" stroke-width="2" opacity="0.5"/>
+  <path d="M1,629 L40,629 M1,629 L1,589"  stroke="#d4a437" stroke-width="2" opacity="0.5"/>
+  <path d="M1199,629 L1160,629 M1199,629 L1199,589" stroke="#d4a437" stroke-width="2" opacity="0.5"/>
+</svg>
