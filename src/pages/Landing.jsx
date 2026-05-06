@@ -285,13 +285,13 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
                   WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent"
                 }}>sempre sotto controllo.</span>
               </div>
-              <div className="text-[12px] text-[#5B4B3A] mt-2 font-mono">
+              <div className="text-[12px] text-[#7B6B5A] mt-2 font-mono">
                 Via Padova 104 · Milano
               </div>
             </div>
             <div className="flex flex-col gap-1.5 text-right">
               {["✓ Corrispettivi AE","✓ IVA 4·10·22%","✓ Satispay & Buoni Pasto"].map(t=>(
-                <div key={t} className="text-[10px] font-mono text-[#4A3A2A] tracking-wide">{t}</div>
+                <div key={t} className="text-[10px] font-mono text-[#7B6B5A] tracking-wide">{t}</div>
               ))}
             </div>
           </div>
@@ -318,7 +318,7 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono tracking-wide border transition-all ${
                   lang === l.id
                     ? "border-[#d4a437] text-[#d4a437] bg-[#d4a437]/10"
-                    : "border-[#2A2520] text-[#4A3A2A] hover:border-[#3A3020] hover:text-[#6B5B4A]"
+                    : "border-[#4A4035] text-[#9B8B7A] hover:border-[#d4a437]/50 hover:text-[#C4B49A]"
                 }`}>
                 <l.Flag />
                 <span>{l.label}</span>
@@ -337,14 +337,14 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
                 className="text-[30px] text-[#F5F0E8] tracking-tight leading-tight">
                 Bentornato
               </h1>
-              <p className="text-[12px] text-[#4A3A2A] mt-1.5 font-mono">
+              <p className="text-[12px] text-[#8B7B6A] mt-1.5 font-mono">
                 Inserisci le credenziali per accedere
               </p>
             </div>
 
             {/* Username */}
             <div className="lp-a2 mb-4">
-              <label className="block text-[10px] uppercase tracking-[0.18em] font-mono text-[#6B5B4A] font-semibold mb-1.5">
+              <label className="block text-[10px] uppercase tracking-[0.18em] font-mono text-[#9B8B7A] font-semibold mb-1.5">
                 Utente
               </label>
               <input
@@ -359,7 +359,7 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
 
             {/* Password */}
             <div className="lp-a3 mb-6">
-              <label className="block text-[10px] uppercase tracking-[0.18em] font-mono text-[#6B5B4A] font-semibold mb-1.5">
+              <label className="block text-[10px] uppercase tracking-[0.18em] font-mono text-[#9B8B7A] font-semibold mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -408,7 +408,7 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
                 )}
               </button>
 
-              <div className="mt-4 text-center text-[10px] font-mono text-[#2A2520] tracking-wide">
+              <div className="mt-4 text-center text-[10px] font-mono text-[#6B5B4A] tracking-wide">
                 Accesso diretto · nessuna registrazione richiesta
               </div>
             </div>
@@ -418,7 +418,7 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
           <div className="absolute bottom-8 left-0 right-0 px-10 lg:px-12">
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"/>
-              <span className="text-[10px] font-mono text-[#3A3530]">Sistema operativo · v1.0</span>
+              <span className="text-[10px] font-mono text-[#6B5B4A]">Sistema operativo · v1.0</span>
             </div>
           </div>
         </div>
