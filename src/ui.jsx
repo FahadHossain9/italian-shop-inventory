@@ -79,22 +79,31 @@ export const Modal = ({ open, onClose, title, eyebrow, size = "md", children, fo
 };
 
 // ── Form atoms ─────────────────────────────────────────────────────────────────
-export const Field = ({ label, children, hint, required, className = "" }) => (
+export const Field = ({ label, children, hint, required, error, className = "" }) => (
   <label className={`block ${className}`}>
-    <span className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-600 font-semibold block mb-1.5 leading-snug">
-      {label}{required && <span className="text-rose-500 ml-1">*</span>}
+    <span className="flex items-start justify-between gap-1 mb-1.5">
+      <span className="text-[10px] uppercase tracking-[0.18em] font-mono text-stone-600 font-semibold leading-snug">
+        {label}
+      </span>
+      {required && (
+        <span className="text-rose-500 text-[11px] font-mono flex-shrink-0 leading-none mt-px" aria-hidden="true">*</span>
+      )}
     </span>
     {children}
-    {hint && <span className="text-[11px] text-stone-400 mt-1.5 block leading-relaxed">{hint}</span>}
+    {error  && <span className="text-[11px] text-rose-600 mt-1 block font-mono leading-tight">{error}</span>}
+    {!error && hint && <span className="text-[11px] text-stone-400 mt-1.5 block leading-relaxed">{hint}</span>}
   </label>
 );
 
-const inputCls = "w-full px-3 py-2.5 text-[13px] border border-stone-300 bg-white focus:outline-none focus:border-stone-800 focus:ring-2 focus:ring-stone-800/10 font-sans transition-colors disabled:bg-stone-50 disabled:text-stone-500";
+const inputBase = "w-full px-3 py-2.5 text-[13px] border bg-white focus:outline-none focus:ring-2 font-sans transition-colors disabled:bg-stone-50 disabled:text-stone-500";
+const inputOk  = "border-stone-300 focus:border-stone-800 focus:ring-stone-800/10";
+const inputErr = "border-rose-400 bg-rose-50/30 focus:border-rose-500 focus:ring-rose-400/15";
+const inputCls = `${inputBase} ${inputOk}`;
 
-export const Input    = ({ className = "", ...rest }) => <input    {...rest} className={`${inputCls} ${className}`} />;
-export const NumInput = ({ className = "", ...rest }) => <input type="number" {...rest} className={`${inputCls} font-mono ${className}`} />;
-export const Textarea = ({ className = "", rows = 3, ...rest }) => <textarea rows={rows} {...rest} className={`${inputCls} ${className}`} />;
-export const Select   = ({ className = "", children, ...rest }) => <select  {...rest} className={`${inputCls} ${className}`}>{children}</select>;
+export const Input    = ({ className = "", error, ...rest }) => <input    {...rest} className={`${inputBase} ${error ? inputErr : inputOk} ${className}`} />;
+export const NumInput = ({ className = "", error, ...rest }) => <input type="number" {...rest} className={`${inputBase} font-mono ${error ? inputErr : inputOk} ${className}`} />;
+export const Textarea = ({ className = "", rows = 3, error, ...rest }) => <textarea rows={rows} {...rest} className={`${inputBase} ${error ? inputErr : inputOk} ${className}`} />;
+export const Select   = ({ className = "", error, children, ...rest }) => <select  {...rest} className={`${inputBase} ${error ? inputErr : inputOk} ${className}`}>{children}</select>;
 
 // ── Buttons ────────────────────────────────────────────────────────────────────
 const BTN_STYLES = {
@@ -213,3 +222,40 @@ export const Empty = ({ icon: Icon, it, en }) => (
     <div className="text-[12px] text-stone-400 mt-1.5 font-mono">{en}</div>
   </div>
 );
+
+// ── Pagination ─────────────────────────────────────────────────────────────────
+export const Pagination = ({ page, total, perPage, onChange }) => {
+  const totalPages = Math.ceil(total / perPage);
+  if (totalPages <= 1) return null;
+  const from  = (page - 1) * perPage + 1;
+  const to    = Math.min(page * perPage, total);
+  const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+  const end   = Math.min(totalPages, start + 4);
+  const pages = [];
+  for (let i = Math.max(1, start); i <= end; i++) pages.push(i);
+  return (
+    <div className="flex items-center justify-between mt-4">
+      <span className="text-[11px] font-mono text-stone-500">
+        {from}–{to} / {total}
+      </span>
+      <div className="flex items-center gap-1">
+        <button disabled={page === 1} onClick={() => onChange(page - 1)}
+          className="px-2.5 py-1.5 text-[13px] border border-stone-300 bg-white hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed font-mono leading-none">
+          ‹
+        </button>
+        {pages.map((p) => (
+          <button key={p} onClick={() => onChange(p)}
+            className={`px-2.5 py-1.5 text-[12px] border font-mono min-w-[32px] leading-none ${
+              p === page ? "bg-stone-900 text-stone-50 border-stone-900" : "border-stone-300 bg-white hover:bg-stone-50 text-stone-700"
+            }`}>
+            {p}
+          </button>
+        ))}
+        <button disabled={page === totalPages} onClick={() => onChange(page + 1)}
+          className="px-2.5 py-1.5 text-[13px] border border-stone-300 bg-white hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed font-mono leading-none">
+          ›
+        </button>
+      </div>
+    </div>
+  );
+};

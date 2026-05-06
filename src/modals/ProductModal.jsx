@@ -17,10 +17,12 @@ export default function ProductModal({ open, mode, initial, suppliers, locations
   const t = (it, en) => tx(lang, it, en);
   const isView   = mode === "view";
   const isCreate = mode === "create";
-  const [form, setForm] = useState(BLANK);
+  const [form,   setForm]   = useState(BLANK);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!open) return;
+    setErrors({});
     if (isCreate) {
       setForm({ ...BLANK, id: nextId(products || [], "SKU"), supplier: suppliers?.[0]?.name || "", location: "WH-01" });
     } else if (initial) {
@@ -28,11 +30,16 @@ export default function ProductModal({ open, mode, initial, suppliers, locations
     }
   }, [open, mode, initial]);
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const clrErr = (k) => setErrors((e) => { const n = { ...e }; delete n[k]; return n; });
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); clrErr(k); };
+
   const submit = (e) => {
     e?.preventDefault?.();
-    if (!form.name.trim()) return alert(t("Il nome prodotto è obbligatorio.", "Product name is required."));
-    if (!form.id.trim())   return alert(t("Il codice SKU è obbligatorio.", "SKU is required."));
+    const errs = {};
+    if (!form.id.trim())   errs.id   = t("SKU obbligatorio", "SKU is required");
+    if (!form.name.trim()) errs.name = t("Nome obbligatorio", "Name is required");
+    if (+form.price < 0)   errs.price = t("Prezzo non valido", "Invalid price");
+    if (Object.keys(errs).length) { setErrors(errs); return; }
     onSave({ ...form, stock: +form.stock || 0, reorder: +form.reorder || 0, price: +form.price || 0,
       cost: +form.cost || 0, iva: +form.iva || 4, sold30d: +form.sold30d || 0, updated: todayStr() }, isCreate);
   };
@@ -81,16 +88,16 @@ export default function ProductModal({ open, mode, initial, suppliers, locations
       }
     >
       <form onSubmit={submit} className="grid grid-cols-2 gap-4">
-        <Field label={<BiLabel it="Codice SKU" en="SKU Code" />} required>
-          <Input value={form.id} onChange={(e) => set("id", e.target.value)} disabled={!isCreate} placeholder="SKU-XXXX" />
+        <Field label={<BiLabel it="Codice SKU" en="SKU Code" />} required error={errors.id}>
+          <Input value={form.id} onChange={(e) => set("id", e.target.value)} disabled={!isCreate} placeholder="SKU-XXXX" error={!!errors.id} />
         </Field>
         <Field label={<BiLabel it="Categoria" en="Category" />} required>
           <Select value={form.category} onChange={(e) => set("category", e.target.value)}>
             {PRODUCT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </Select>
         </Field>
-        <Field label={<BiLabel it="Nome Prodotto (Italiano)" en="Product Name (Italian)" />} required className="col-span-2">
-          <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Es. Riso Basmati Extra Lungo 1kg" />
+        <Field label={<BiLabel it="Nome Prodotto (Italiano)" en="Product Name (Italian)" />} required error={errors.name} className="col-span-2">
+          <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Es. Riso Basmati Extra Lungo 1kg" error={!!errors.name} />
         </Field>
         <Field label={<BiLabel it="Nome in Inglese (opzionale)" en="English Name (optional)" />} className="col-span-2">
           <Input value={form.nameEn} onChange={(e) => set("nameEn", e.target.value)} placeholder="e.g. Basmati Long Grain Rice 1kg" />
@@ -121,8 +128,8 @@ export default function ProductModal({ open, mode, initial, suppliers, locations
         <Field label={<BiLabel it="Prezzo Acquisto (€)" en="Purchase Price (€)" />}>
           <NumInput value={form.cost} min={0} step="0.01" onChange={(e) => set("cost", e.target.value)} />
         </Field>
-        <Field label={<BiLabel it="Prezzo Vendita (€)" en="Selling Price (€)" />}>
-          <NumInput value={form.price} min={0} step="0.01" onChange={(e) => set("price", e.target.value)} />
+        <Field label={<BiLabel it="Prezzo Vendita (€)" en="Selling Price (€)" />} error={errors.price}>
+          <NumInput value={form.price} min={0} step="0.01" onChange={(e) => set("price", e.target.value)} error={!!errors.price} />
         </Field>
         <Field label={<BiLabel it="Aliquota IVA" en="VAT Rate" />}>
           <Select value={form.iva} onChange={(e) => set("iva", e.target.value)}>

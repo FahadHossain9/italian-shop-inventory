@@ -17,18 +17,26 @@ export default function LocaleModal({ open, mode, initial, locations, onClose, o
   const t = (it, en) => tx(lang, it, en);
   const isView   = mode === "view";
   const isCreate = mode === "create";
-  const [form, setForm] = useState(BLANK);
+  const [form,   setForm]   = useState(BLANK);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!open) return;
+    setErrors({});
     if (isCreate) setForm({ ...BLANK, id: nextId(locations || [], "WH", 2) });
     else if (initial) setForm({ ...BLANK, ...initial });
   }, [open, mode, initial]);
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const clrErr = (k) => setErrors((e) => { const n = { ...e }; delete n[k]; return n; });
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); clrErr(k); };
+
   const submit = (e) => {
     e?.preventDefault?.();
-    if (!form.name.trim()) return alert(t("Il nome locale è obbligatorio.","Area name is required."));
+    const errs = {};
+    if (!form.id.trim())                      errs.id       = t("ID obbligatorio", "ID is required");
+    if (!form.name.trim())                    errs.name     = t("Nome obbligatorio", "Name is required");
+    if (!+form.capacity || +form.capacity < 1) errs.capacity = t("Capacità deve essere > 0", "Capacity must be > 0");
+    if (Object.keys(errs).length) { setErrors(errs); return; }
     onSave({ ...form, capacity: +form.capacity || 0, used: +form.used || 0, products: +form.products || 0, value: +form.value || 0 }, isCreate);
   };
 
@@ -65,16 +73,16 @@ export default function LocaleModal({ open, mode, initial, locations, onClose, o
       }
     >
       <form onSubmit={submit} className="grid grid-cols-2 gap-4">
-        <Field label={<BiLabel it="ID" en="ID" />} required>
-          <Input value={form.id} onChange={(e) => set("id", e.target.value)} disabled={!isCreate} className="font-mono" />
+        <Field label={<BiLabel it="ID" en="ID" />} required error={errors.id}>
+          <Input value={form.id} onChange={(e) => set("id", e.target.value)} disabled={!isCreate} className="font-mono" error={!!errors.id} />
         </Field>
         <Field label={<BiLabel it="Tipo Locale" en="Area Type" />}>
           <Select value={form.type} onChange={(e) => set("type", e.target.value)}>
             {TYPES.map((tp) => <option key={tp.value} value={tp.value}>{t(tp.it, tp.en)}</option>)}
           </Select>
         </Field>
-        <Field label={<BiLabel it="Nome (Italiano)" en="Name (Italian)" />} required className="col-span-2">
-          <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Es. Scaffali Principali" />
+        <Field label={<BiLabel it="Nome (Italiano)" en="Name (Italian)" />} required error={errors.name} className="col-span-2">
+          <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Es. Scaffali Principali" error={!!errors.name} />
         </Field>
         <Field label={<BiLabel it="Nome (Inglese)" en="Name (English)" />} className="col-span-2">
           <Input value={form.nameEn} onChange={(e) => set("nameEn", e.target.value)} placeholder="e.g. Main Shelves" />
@@ -85,8 +93,8 @@ export default function LocaleModal({ open, mode, initial, locations, onClose, o
         <Field label={<BiLabel it="Responsabile" en="Manager" />}>
           <Input value={form.manager} onChange={(e) => set("manager", e.target.value)} />
         </Field>
-        <Field label={<BiLabel it="Capacità (pz)" en="Capacity (units)" />}>
-          <NumInput min={0} value={form.capacity} onChange={(e) => set("capacity", e.target.value)} />
+        <Field label={<BiLabel it="Capacità (pz)" en="Capacity (units)" />} required error={errors.capacity}>
+          <NumInput min={1} value={form.capacity} onChange={(e) => set("capacity", e.target.value)} error={!!errors.capacity} />
         </Field>
         <Field label={<BiLabel it="Occupato (pz)" en="Used (units)" />}>
           <NumInput min={0} value={form.used} onChange={(e) => set("used", e.target.value)} />

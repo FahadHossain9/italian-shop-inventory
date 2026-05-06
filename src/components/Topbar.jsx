@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Search, Bell, LogOut, AlertTriangle, Clock, ShoppingBag, Package, FileText, X } from "lucide-react";
+import { Search, Bell, LogOut, AlertTriangle, Clock, ShoppingBag, Package, FileText, X,
+  LayoutDashboard, ArrowLeftRight, ShoppingCart, Truck, MapPin, BarChart3, Settings, HelpCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useLang, tx } from "../lang.jsx";
 
 const FlagIT = () => (
@@ -33,6 +35,19 @@ const TONE = {
   info:     { dot: "bg-sky-500",     bg: "bg-sky-50",     border: "border-sky-100",    text: "text-sky-700"    },
   accent:   { dot: "bg-[#d4a437]",   bg: "bg-[#fdf6e3]",  border: "border-[#e8d4a0]",  text: "text-[#7a5a1a]"  },
 };
+
+const NAV_ITEMS = [
+  { id: "dashboard", it: "Cruscotto",        en: "Dashboard",        icon: LayoutDashboard, group: "Magazzino"     },
+  { id: "products",  it: "Prodotti",          en: "Products",         icon: Package,         group: "Magazzino"     },
+  { id: "movements", it: "Movimenti",         en: "Stock Movements",  icon: ArrowLeftRight,  group: "Magazzino"     },
+  { id: "purchases", it: "Ordini Acquisto",   en: "Purchase Orders",  icon: ShoppingCart,    group: "Commerciale"   },
+  { id: "vendite",   it: "Vendite",           en: "Sales",            icon: ShoppingBag,     group: "Commerciale"   },
+  { id: "suppliers", it: "Fornitori",         en: "Suppliers",        icon: Truck,           group: "Commerciale"   },
+  { id: "locali",    it: "Locali",            en: "Shop Areas",       icon: MapPin,          group: "Commerciale"   },
+  { id: "reports",   it: "Report",            en: "Reports",          icon: BarChart3,       group: "Analisi"       },
+  { id: "settings",  it: "Impostazioni",      en: "Settings",         icon: Settings,        group: "Sistema"       },
+  { id: "help",      it: "Aiuto & Guida",     en: "Help & Guide",     icon: HelpCircle,      group: "Sistema"       },
+];
 
 function useNotifications(lang) {
   const t = (it, en) => tx(lang, it, en);
@@ -84,9 +99,13 @@ function useNotifications(lang) {
 
 export default function Topbar({ title, eyebrow, alertCount = 0, onLogout }) {
   const { lang, setLang } = useLang();
-  const [notifOpen, setNotifOpen]   = useState(false);
-  const [readIds,   setReadIds]     = useState(new Set());
-  const bellRef = useRef(null);
+  const navigate = useNavigate();
+  const [notifOpen,    setNotifOpen]    = useState(false);
+  const [readIds,      setReadIds]      = useState(new Set());
+  const [searchOpen,   setSearchOpen]   = useState(false);
+  const [searchQuery,  setSearchQuery]  = useState("");
+  const bellRef   = useRef(null);
+  const searchRef = useRef(null);
 
   const notifications = useNotifications(lang);
   const unreadCount   = notifications.filter(n => n.unread && !readIds.has(n.id)).length;
@@ -103,6 +122,32 @@ export default function Topbar({ title, eyebrow, alertCount = 0, onLogout }) {
 
   const markAllRead = () => setReadIds(new Set(notifications.map(n => n.id)));
 
+  // Close search palette on outside click
+  useEffect(() => {
+    if (!searchOpen) return;
+    const handler = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchOpen(false);
+        setSearchQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [searchOpen]);
+
+  const filteredNav = searchQuery.trim()
+    ? NAV_ITEMS.filter((item) => {
+        const q = searchQuery.toLowerCase();
+        return item.it.toLowerCase().includes(q) || item.en.toLowerCase().includes(q) || item.group.toLowerCase().includes(q);
+      })
+    : NAV_ITEMS;
+
+  const handleNavSelect = (id) => {
+    navigate(`/shop/${id}`);
+    setSearchOpen(false);
+    setSearchQuery("");
+  };
+
   return (
     <header className="bg-[#faf8f3] border-b border-stone-300 px-8 py-5 flex items-center justify-between sticky top-0 z-10">
       <div>
@@ -114,14 +159,46 @@ export default function Topbar({ title, eyebrow, alertCount = 0, onLogout }) {
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Search */}
-        <div className="relative">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" strokeWidth={1.75}/>
+        {/* Search / Command Palette */}
+        <div className="relative" ref={searchRef}>
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" strokeWidth={1.75}/>
           <input
             type="text"
-            placeholder={tx(lang, "Cerca SKU, prodotto, fornitore…", "Search SKU, product, supplier…")}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setSearchOpen(true)}
+            placeholder={tx(lang, "Cerca sezione…", "Search section…")}
             className="bg-white border border-stone-300 pl-9 pr-4 py-2 w-64 text-[13px] focus:outline-none focus:border-[#d4a437] focus:ring-1 focus:ring-[#d4a437] font-sans placeholder:text-stone-400"
           />
+          {searchOpen && (
+            <div className="absolute left-0 top-full mt-1 w-72 bg-white border border-stone-200 shadow-xl z-50 py-1"
+              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)" }}>
+              {filteredNav.length === 0 ? (
+                <div className="px-4 py-3 text-[12px] text-stone-400 font-mono">
+                  {tx(lang, "Nessuna sezione trovata", "No section found")}
+                </div>
+              ) : (
+                filteredNav.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button key={item.id} onClick={() => handleNavSelect(item.id)}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-stone-50 transition-colors group">
+                      <div className="w-7 h-7 bg-stone-100 group-hover:bg-[#fbf3df] flex items-center justify-center flex-shrink-0 transition-colors">
+                        <Icon className="w-3.5 h-3.5 text-stone-600 group-hover:text-[#7a5a1a]" strokeWidth={1.75} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] text-stone-900 font-medium leading-snug">
+                          {lang === "en" ? item.en : item.it}
+                        </div>
+                        <div className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">{item.group}</div>
+                      </div>
+                      <span className="text-[10px] font-mono text-stone-300 group-hover:text-stone-400">↵</span>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          )}
         </div>
 
         {/* Bell + notification panel */}

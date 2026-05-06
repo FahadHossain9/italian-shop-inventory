@@ -11,18 +11,25 @@ export default function SupplierModal({ open, mode, initial, suppliers, onClose,
   const t = (it, en) => tx(lang, it, en);
   const isView   = mode === "view";
   const isCreate = mode === "create";
-  const [form, setForm] = useState(BLANK);
+  const [form,   setForm]   = useState(BLANK);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!open) return;
+    setErrors({});
     if (isCreate) setForm({ ...BLANK, id: nextId(suppliers || [], "SUP", 2), lastOrder: todayStr() });
     else if (initial) setForm({ ...BLANK, ...initial });
   }, [open, mode, initial]);
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const clrErr = (k) => setErrors((e) => { const n = { ...e }; delete n[k]; return n; });
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); clrErr(k); };
+
   const submit = (e) => {
     e?.preventDefault?.();
-    if (!form.name.trim()) return alert(t("Il nome fornitore è obbligatorio.","Supplier name is required."));
+    const errs = {};
+    if (!form.id.trim())   errs.id   = t("ID obbligatorio", "ID is required");
+    if (!form.name.trim()) errs.name = t("Ragione sociale obbligatoria", "Company name is required");
+    if (Object.keys(errs).length) { setErrors(errs); return; }
     onSave({ ...form, products: +form.products || 0, totalSpend: +form.totalSpend || 0, rating: +form.rating || 0 }, isCreate);
   };
 
@@ -60,14 +67,14 @@ export default function SupplierModal({ open, mode, initial, suppliers, onClose,
       }
     >
       <form onSubmit={submit} className="grid grid-cols-2 gap-4">
-        <Field label={<BiLabel it="ID Fornitore" en="Supplier ID" />} required>
-          <Input value={form.id} onChange={(e) => set("id", e.target.value)} disabled={!isCreate} />
+        <Field label={<BiLabel it="ID Fornitore" en="Supplier ID" />} required error={errors.id}>
+          <Input value={form.id} onChange={(e) => set("id", e.target.value)} disabled={!isCreate} error={!!errors.id} />
         </Field>
         <Field label={<BiLabel it="Città" en="City" />}>
           <Input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Milano" />
         </Field>
-        <Field label={<BiLabel it="Ragione Sociale" en="Company Name" />} required className="col-span-2">
-          <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Es. Milano Ingrosso Alimentari S.r.l." />
+        <Field label={<BiLabel it="Ragione Sociale" en="Company Name" />} required error={errors.name} className="col-span-2">
+          <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Es. Milano Ingrosso Alimentari S.r.l." error={!!errors.name} />
         </Field>
         <Field label={<BiLabel it="Persona di Contatto" en="Contact Person" />}>
           <Input value={form.contact} onChange={(e) => set("contact", e.target.value)} />

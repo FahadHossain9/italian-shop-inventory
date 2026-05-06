@@ -222,8 +222,11 @@ function ShopLayout({ onLogout }) {
               <Dashboard
                 products={products}
                 movements={movements}
+                vendite={vendite}
                 onJump={goTo}
                 onNewMovement={() => openDialog("movement", "create", null)}
+                onNewSale={() => { goTo("vendite"); openDialog("vendita", "create", null); }}
+                onNewPurchaseOrder={() => { goTo("purchases"); openDialog("purchase", "create", null); }}
               />
             }/>
 

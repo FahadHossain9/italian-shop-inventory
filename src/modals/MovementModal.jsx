@@ -17,10 +17,12 @@ const BLANK = { id: "", type: "in", sku: "", product: "", qty: 1, ref: "", locat
 export default function MovementModal({ open, products, locations, movements, onClose, onSave }) {
   const { lang } = useLang();
   const t = (it, en) => tx(lang, it, en);
-  const [form, setForm] = useState(BLANK);
+  const [form,   setForm]   = useState(BLANK);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!open) return;
+    setErrors({});
     const first = products?.[0];
     setForm({
       ...BLANK,
@@ -32,19 +34,22 @@ export default function MovementModal({ open, products, locations, movements, on
     });
   }, [open]);
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const clrErr = (k) => setErrors((e) => { const n = { ...e }; delete n[k]; return n; });
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); clrErr(k); };
 
   const onSkuChange = (sku) => {
     const p = (products || []).find((x) => x.id === sku);
     setForm((f) => ({ ...f, sku, product: p?.name || "" }));
+    clrErr("sku");
   };
 
   const submit = (e) => {
     e?.preventDefault?.();
-    const qty = +form.qty;
-    if (!form.sku) return alert(t("Seleziona un prodotto.","Select a product."));
-    if (!qty)      return alert(t("La quantità non può essere zero.","Quantity cannot be zero."));
-    onSave({ ...form, qty, time: nowStamp() });
+    const errs = {};
+    if (!form.sku)   errs.sku = t("Seleziona un prodotto", "Select a product");
+    if (!+form.qty)  errs.qty = t("Quantità non può essere zero", "Quantity cannot be zero");
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    onSave({ ...form, qty: +form.qty, time: nowStamp() });
   };
 
   const selectedProduct = (products || []).find((p) => p.id === form.sku);
@@ -71,8 +76,8 @@ export default function MovementModal({ open, products, locations, movements, on
             {TYPES.map((tp) => <option key={tp.value} value={tp.value}>{t(tp.it, tp.en)}</option>)}
           </Select>
         </Field>
-        <Field label={<BiLabel it="Prodotto" en="Product" />} required className="col-span-2">
-          <Select value={form.sku} onChange={(e) => onSkuChange(e.target.value)}>
+        <Field label={<BiLabel it="Prodotto" en="Product" />} required error={errors.sku} className="col-span-2">
+          <Select value={form.sku} onChange={(e) => onSkuChange(e.target.value)} error={!!errors.sku}>
             {(products || []).map((p) => (
               <option key={p.id} value={p.id}>{p.id} — {p.name} ({t("giacenza","stock")}: {p.stock})</option>
             ))}
@@ -83,9 +88,9 @@ export default function MovementModal({ open, products, locations, movements, on
             </span>
           )}
         </Field>
-        <Field label={<BiLabel it="Quantità (pz)" en="Quantity (pcs)" />} required
-          hint={form.type === "adjust" ? t("Usa numero negativo per sottrarre.","Use negative number to subtract.") : ""}>
-          <NumInput value={form.qty} onChange={(e) => set("qty", e.target.value)} step="1" />
+        <Field label={<BiLabel it="Quantità (pz)" en="Quantity (pcs)" />} required error={errors.qty}
+          hint={!errors.qty && form.type === "adjust" ? t("Usa numero negativo per sottrarre.","Use negative number to subtract.") : ""}>
+          <NumInput value={form.qty} onChange={(e) => set("qty", e.target.value)} step="1" error={!!errors.qty} />
         </Field>
         <Field label={<BiLabel it="Locale / Area" en="Location / Area" />}>
           <Select value={form.location} onChange={(e) => set("location", e.target.value)}>

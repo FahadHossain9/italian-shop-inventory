@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Plus, Eye, Edit3, Trash2, ShoppingBag, DollarSign, TrendingUp, CheckCircle2, Printer } from "lucide-react";
 import { useLang, tx } from "../lang.jsx";
-import { StatusPill, KpiCard, IconBtn } from "../ui.jsx";
+import { StatusPill, KpiCard, IconBtn, Pagination } from "../ui.jsx";
 import { fmtEur, fmtEurShort, fmtDateIT } from "../helpers.js";
 import { PAYMENT_CHANNELS } from "../data.js";
 
@@ -52,6 +52,7 @@ function printDocumento(v) {
 }
 
 const STATUS_TONE = { completata: "ok", "in consegna": "accent", "in elaborazione": "warning", annullata: "critical" };
+const PAGE_SIZE = 15;
 
 const channelStyle = (id) => PAYMENT_CHANNELS.find((c) => c.id === id)?.color
   || "border-stone-300 text-stone-700 bg-stone-50";
@@ -60,10 +61,13 @@ export default function Vendite({ vendite, onView, onEdit, onCreate, onDelete })
   const { lang } = useLang();
   const t = (it, en) => tx(lang, it, en);
   const [channelFilter, setChannelFilter] = useState("all");
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() =>
     channelFilter === "all" ? vendite : vendite.filter((v) => v.channel === channelFilter),
     [vendite, channelFilter]);
+
+  const paged = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
 
   const totalRev   = filtered.reduce((s, v) => s + (v.total || 0), 0);
   const completed  = vendite.filter((v) => v.status === "completata").length;
@@ -161,7 +165,7 @@ export default function Vendite({ vendite, onView, onEdit, onCreate, onDelete })
             </h3>
           </div>
           <div className="flex items-center gap-2">
-            <select value={channelFilter} onChange={(e) => setChannelFilter(e.target.value)}
+            <select value={channelFilter} onChange={(e) => { setChannelFilter(e.target.value); setPage(1); }}
               className="px-3 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 font-mono">
               <option value="all">{t("Tutti i canali","All channels")}</option>
               {PAYMENT_CHANNELS.map((ch) => (
@@ -190,7 +194,7 @@ export default function Vendite({ vendite, onView, onEdit, onCreate, onDelete })
                 {t("Nessuna vendita in questo periodo.","No sales for this period.")}
               </td></tr>
             )}
-            {filtered.map((v) => {
+            {paged.map((v) => {
               const lineCount = v.lines?.length || v.items || 0;
               const preview   = (v.lines || []).slice(0, 2).map((l) => l.product).join(", ");
               return (
@@ -226,6 +230,9 @@ export default function Vendite({ vendite, onView, onEdit, onCreate, onDelete })
             })}
           </tbody>
         </table>
+        <div className="px-6 py-4 border-t border-stone-100">
+          <Pagination page={page} total={filtered.length} perPage={PAGE_SIZE} onChange={setPage} />
+        </div>
       </div>
     </div>
   );

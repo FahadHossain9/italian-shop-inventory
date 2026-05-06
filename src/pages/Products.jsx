@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { Search, Download, Plus, Eye, Edit3, Trash2 } from "lucide-react";
 import { useLang, tx } from "../lang.jsx";
-import { StatusPill, IconBtn } from "../ui.jsx";
+import { StatusPill, IconBtn, Pagination } from "../ui.jsx";
 import { fmtEur, fmtEurShort, getStockStatus, daysUntilExpiry, ivaTone, downloadCsv, todayStr, fmtDateIT } from "../helpers.js";
+
+const PAGE_SIZE = 15;
 
 export default function Products({ products, onView, onEdit, onCreate, onDelete }) {
   const { lang } = useLang();
@@ -12,6 +14,7 @@ export default function Products({ products, onView, onEdit, onCreate, onDelete 
   const [search,  setSearch]  = useState("");
   const [sortBy,  setSortBy]  = useState("name");
   const [catFilter, setCat]   = useState("all");
+  const [page, setPage] = useState(1);
 
   const categories = useMemo(() => ["all", ...new Set(products.map((p) => p.category))], [products]);
 
@@ -38,6 +41,8 @@ export default function Products({ products, onView, onEdit, onCreate, onDelete 
     });
   }, [filter, catFilter, search, sortBy, products]);
 
+  const paged = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
+
   const exportCsv = () => {
     downloadCsv(`prodotti-${todayStr()}.csv`,
       ["SKU", "Prodotto / Product", "Categoria", "Fornitore", "Locale", "Scaffale", "Giacenza", "Scorta Min", "Costo €", "Prezzo €", "Valore €", "IVA%", "Scadenza", "Venduto 30gg"],
@@ -59,7 +64,7 @@ export default function Products({ products, onView, onEdit, onCreate, onDelete 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 flex-wrap">
           {FILTERS.map((f) => (
-            <button key={f.id} onClick={() => setFilter(f.id)}
+            <button key={f.id} onClick={() => { setFilter(f.id); setPage(1); }}
               className={`px-3 py-1.5 text-[12px] font-medium border transition-colors ${filter === f.id ? "bg-stone-900 text-stone-50 border-stone-900" : "bg-white text-stone-700 border-stone-300 hover:border-stone-500"}`}>
               {t(f.it, f.en)} <span className="font-mono opacity-70 ml-1">{f.count}</span>
             </button>
@@ -68,15 +73,15 @@ export default function Products({ products, onView, onEdit, onCreate, onDelete 
         <div className="flex items-center gap-2">
           <div className="relative">
             <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)}
+            <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder={t("Cerca…", "Search…")}
               className="pl-8 pr-3 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 w-44" />
           </div>
-          <select value={catFilter} onChange={(e) => setCat(e.target.value)}
+          <select value={catFilter} onChange={(e) => { setCat(e.target.value); setPage(1); }}
             className="px-2 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 font-mono">
             {categories.map((c) => <option key={c} value={c}>{c === "all" ? t("Tutte categorie", "All categories") : c}</option>)}
           </select>
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
+          <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
             className="px-2 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 font-mono">
             <option value="name">{t("Nome", "Name")}</option>
             <option value="stock">{t("Giacenza", "Stock")}</option>
@@ -113,7 +118,7 @@ export default function Products({ products, onView, onEdit, onCreate, onDelete 
                 {t("Nessun prodotto corrisponde al filtro.", "No products match the filter.")}
               </td></tr>
             )}
-            {filtered.map((p) => {
+            {paged.map((p) => {
               const status = getStockStatus(p);
               const days   = daysUntilExpiry(p.expiry);
               return (
@@ -168,9 +173,7 @@ export default function Products({ products, onView, onEdit, onCreate, onDelete 
           </tbody>
         </table>
       </div>
-      <div className="mt-3 text-[11px] text-stone-500 font-mono">
-        {t(`Mostrando ${filtered.length} di ${products.length} prodotti`, `Showing ${filtered.length} of ${products.length} products`)}
-      </div>
+      <Pagination page={page} total={filtered.length} perPage={PAGE_SIZE} onChange={setPage} />
     </div>
   );
 }

@@ -59,18 +59,26 @@ export default function PurchaseOrderModal({ open, mode, initial, suppliers, pur
   const t = (it, en) => tx(lang, it, en);
   const isView   = mode === "view";
   const isCreate = mode === "create";
-  const [form, setForm] = useState(BLANK);
+  const [form,   setForm]   = useState(BLANK);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!open) return;
+    setErrors({});
     if (isCreate) setForm({ ...BLANK, id: nextId(purchaseOrders || [], "OA-2026"), supplier: suppliers?.[0]?.name || "", created: todayStr() });
     else if (initial) setForm({ ...BLANK, ...initial });
   }, [open, mode, initial]);
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const clrErr = (k) => setErrors((e) => { const n = { ...e }; delete n[k]; return n; });
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); clrErr(k); };
+
   const submit = (e) => {
     e?.preventDefault?.();
-    if (!form.supplier.trim()) return alert(t("Seleziona il fornitore.","Select a supplier."));
+    const errs = {};
+    if (!form.supplier.trim())            errs.supplier = t("Fornitore obbligatorio", "Supplier is required");
+    if (!+form.items || +form.items < 1)  errs.items    = t("Almeno 1 articolo", "At least 1 item");
+    if (+form.total < 0)                  errs.total    = t("Totale non valido", "Invalid total");
+    if (Object.keys(errs).length) { setErrors(errs); return; }
     onSave({ ...form, items: +form.items || 0, total: +form.total || 0 }, isCreate);
   };
 
@@ -123,17 +131,17 @@ export default function PurchaseOrderModal({ open, mode, initial, suppliers, pur
             {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
           </Select>
         </Field>
-        <Field label={<BiLabel it="Fornitore" en="Supplier" />} required className="col-span-2">
-          <Select value={form.supplier} onChange={(e) => set("supplier", e.target.value)}>
+        <Field label={<BiLabel it="Fornitore" en="Supplier" />} required error={errors.supplier} className="col-span-2">
+          <Select value={form.supplier} onChange={(e) => set("supplier", e.target.value)} error={!!errors.supplier}>
             <option value="">{t("— Seleziona fornitore —","— Select supplier —")}</option>
             {(suppliers || []).map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
           </Select>
         </Field>
-        <Field label={<BiLabel it="N° Articoli (SKU)" en="Item Count (SKU)" />}>
-          <NumInput min={1} value={form.items} onChange={(e) => set("items", e.target.value)} />
+        <Field label={<BiLabel it="N° Articoli (SKU)" en="Item Count (SKU)" />} required error={errors.items}>
+          <NumInput min={1} value={form.items} onChange={(e) => set("items", e.target.value)} error={!!errors.items} />
         </Field>
-        <Field label={<BiLabel it="Totale (€)" en="Total (€)" />}>
-          <NumInput min={0} step="0.01" value={form.total} onChange={(e) => set("total", e.target.value)} />
+        <Field label={<BiLabel it="Totale (€)" en="Total (€)" />} error={errors.total}>
+          <NumInput min={0} step="0.01" value={form.total} onChange={(e) => set("total", e.target.value)} error={!!errors.total} />
         </Field>
         <Field label={<BiLabel it="Data Ordine" en="Order Date" />}>
           <Input type="date" value={form.created} onChange={(e) => set("created", e.target.value)} />

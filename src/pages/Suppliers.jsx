@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Eye, Edit3, Trash2, Mail, Phone, Star, MessageCircle } from "lucide-react";
 import { useLang, tx } from "../lang.jsx";
-import { IconBtn, Empty } from "../ui.jsx";
+import { IconBtn, Empty, Pagination } from "../ui.jsx";
 import { fmtEurShort } from "../helpers.js";
 import { Truck } from "lucide-react";
+
+const PAGE_SIZE = 6;
 
 export default function Suppliers({ suppliers, onView, onEdit, onCreate, onDelete }) {
   const { lang } = useLang();
   const t = (it, en) => tx(lang, it, en);
+  const [page, setPage] = useState(1);
+  const paged = useMemo(() => suppliers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [suppliers, page]);
 
   return (
     <div className="p-8 bg-[#faf8f3] min-h-full">
@@ -23,7 +27,7 @@ export default function Suppliers({ suppliers, onView, onEdit, onCreate, onDelet
       {suppliers.length === 0 && <Empty icon={Truck} it="Nessun fornitore ancora." en="No suppliers yet." />}
 
       <div className="grid grid-cols-2 gap-4">
-        {suppliers.map((s) => (
+        {paged.map((s) => (
           <div key={s.id} className="bg-white border border-stone-300 p-5 hover:border-stone-400 transition-colors group relative">
             {/* Actions */}
             <div className="absolute top-3 right-3 flex items-center gap-1">
@@ -89,6 +93,7 @@ export default function Suppliers({ suppliers, onView, onEdit, onCreate, onDelet
           </div>
         ))}
       </div>
+      <Pagination page={page} total={suppliers.length} perPage={PAGE_SIZE} onChange={setPage} />
     </div>
   );
 }

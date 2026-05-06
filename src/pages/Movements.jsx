@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { Search, Plus, ArrowDown, ArrowUp, ArrowLeftRight, Edit3, AlertTriangle } from "lucide-react";
 import { useLang, tx } from "../lang.jsx";
-import { StatusPill, KpiCard } from "../ui.jsx";
+import { StatusPill, KpiCard, Pagination } from "../ui.jsx";
 import { Activity } from "lucide-react";
+
+const PAGE_SIZE = 15;
 
 const TYPE_MAP = {
   in:       { it: "Carico",     en: "Stock In",    tone: "ok",       Icon: ArrowDown      },
@@ -18,6 +20,7 @@ export default function Movements({ movements, onCreate }) {
 
   const [typeFilter, setType]   = useState("all");
   const [search,     setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
   const todayIn  = movements.filter((m) => m.type === "in"  && m.time.startsWith("2026-05-03")).reduce((s, m) => s + m.qty, 0);
   const todayOut = movements.filter((m) => (m.type === "out" || m.type === "scaduto") && m.time.startsWith("2026-05-03")).reduce((s, m) => s + m.qty, 0);
@@ -31,6 +34,8 @@ export default function Movements({ movements, onCreate }) {
     }
     return list;
   }, [movements, typeFilter, search]);
+
+  const paged = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
 
   return (
     <div className="p-8 bg-[#faf8f3] min-h-full">
@@ -56,11 +61,11 @@ export default function Movements({ movements, onCreate }) {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400" />
-              <input value={search} onChange={(e) => setSearch(e.target.value)}
+              <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 placeholder={t("Cerca SKU, riferimento…","Search SKU, ref…")}
                 className="pl-8 pr-3 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 w-48" />
             </div>
-            <select value={typeFilter} onChange={(e) => setType(e.target.value)}
+            <select value={typeFilter} onChange={(e) => { setType(e.target.value); setPage(1); }}
               className="px-3 py-1.5 text-[12px] border border-stone-300 bg-white focus:outline-none focus:border-stone-700 font-mono">
               <option value="all">{t("Tutti i tipi","All types")}</option>
               {Object.entries(TYPE_MAP).map(([k, v]) => (
@@ -89,7 +94,7 @@ export default function Movements({ movements, onCreate }) {
                 {t("Nessun movimento corrisponde al filtro.","No movements match the filter.")}
               </td></tr>
             )}
-            {filtered.map((m) => {
+            {paged.map((m) => {
               const tm = TYPE_MAP[m.type] || TYPE_MAP.adjust;
               const TIcon = tm.Icon;
               const qtyColor = m.type === "in" ? "text-emerald-700" : m.type === "out" || m.type === "scaduto" ? "text-rose-700" : m.type === "adjust" ? "text-stone-700" : "text-[#b8862f]";
@@ -120,6 +125,7 @@ export default function Movements({ movements, onCreate }) {
           </tbody>
         </table>
       </div>
+      <Pagination page={page} total={filtered.length} perPage={PAGE_SIZE} onChange={setPage} />
     </div>
   );
 }

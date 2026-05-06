@@ -77,14 +77,16 @@ export default function VenditeModal({ open, mode, initial, vendite, products, o
   const isView   = mode === "view";
   const isCreate = mode === "create";
 
-  const [id,       setId]       = useState("");
-  const [lines,    setLines]    = useState([{ ...BLANK_LINE }]);
-  const [channel,  setChannel]  = useState("Contante");
-  const [customer, setCustomer] = useState("");
-  const [note,     setNote]     = useState("");
+  const [id,        setId]        = useState("");
+  const [lines,     setLines]     = useState([{ ...BLANK_LINE }]);
+  const [channel,   setChannel]   = useState("Contante");
+  const [customer,  setCustomer]  = useState("");
+  const [note,      setNote]      = useState("");
+  const [linesErr,  setLinesErr]  = useState("");
 
   useEffect(() => {
     if (!open) return;
+    setLinesErr("");
     if (isCreate) {
       setId(nextId(vendite || [], "VEN"));
       setLines([{ ...BLANK_LINE }]);
@@ -102,6 +104,7 @@ export default function VenditeModal({ open, mode, initial, vendite, products, o
 
   // ── Line helpers ────────────────────────────────────────────────────────────
   const selectProduct = (idx, sku) => {
+    setLinesErr("");
     const p = products?.find((x) => x.id === sku);
     if (!p) return;
     setLines((prev) => prev.map((l, i) =>
@@ -140,8 +143,11 @@ export default function VenditeModal({ open, mode, initial, vendite, products, o
 
   // ── Submit ──────────────────────────────────────────────────────────────────
   const submit = (andPrint = false) => {
-    if (validLines.length === 0)
-      return alert(t("Aggiungere almeno un prodotto.", "Add at least one product."));
+    if (validLines.length === 0) {
+      setLinesErr(t("Aggiungere almeno un prodotto con SKU e quantità > 0.", "Add at least one product with SKU and quantity > 0."));
+      return;
+    }
+    setLinesErr("");
     const record = {
       id, customer: customer.trim() || "—", channel, status: "completata",
       date: todayStr(), note,
@@ -360,6 +366,11 @@ export default function VenditeModal({ open, mode, initial, vendite, products, o
             className="mt-2 flex items-center gap-1.5 text-[12px] text-stone-600 hover:text-stone-900 font-medium px-2 py-1 hover:bg-stone-100 transition-colors">
             <Plus className="w-3.5 h-3.5" /> {t("Aggiungi prodotto","Add product")}
           </button>
+          {linesErr && (
+            <div className="mt-2 px-3 py-2 bg-rose-50 border border-rose-300 text-[11px] text-rose-700 font-mono">
+              {linesErr}
+            </div>
+          )}
         </div>
 
         {/* ── IVA breakdown + total ────────────────────────────────────────── */}
