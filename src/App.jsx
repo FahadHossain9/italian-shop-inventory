@@ -390,7 +390,7 @@ function RequireAuth({ lang, onLogout }) {
 // ── Root App — handles auth + top-level routing ──────────────────────────────
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(() => localStorage.getItem(AUTH_KEY) === "1");
-  const [lang,     setLang]     = useState("bilingual");
+  const [lang,     setLang]     = useState("it");
 
   const handleLogin = useCallback(() => {
     localStorage.setItem(AUTH_KEY, "1");

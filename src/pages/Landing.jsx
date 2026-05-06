@@ -214,12 +214,14 @@ const BazarScene = () => (
 );
 
 // ─── Landing ─────────────────────────────────────────────────────────────────
-export default function Landing({ onEnter, lang = "bilingual", setLang = () => {} }) {
+export default function Landing({ onEnter, lang = "it", setLang = () => {} }) {
   const [user, setUser]       = useState("gestore");
   const [pass, setPass]       = useState("albazar2025");
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [exiting, setExiting] = useState(false);
+
+  const tl = (it, en) => lang === "en" ? en : it;
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -261,7 +263,7 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
               <div style={{fontFamily:"'Fraunces',serif", fontWeight:500}}
                 className="text-[17px] text-[#F5F0E8] tracking-tight leading-none">Al Bazar</div>
               <div className="text-[9px] font-mono tracking-[0.22em] text-[#5B4B3A] uppercase mt-0.5">
-                Shop Manager
+                {tl("Gestione Negozio","Shop Manager")}
               </div>
             </div>
           </div>
@@ -279,19 +281,23 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
             <div>
               <div style={{fontFamily:"'Fraunces',serif", fontWeight:400}}
                 className="text-[26px] text-[#F5F0E8] leading-tight tracking-tight">
-                Il tuo negozio,<br/>
+                {tl("Il tuo negozio,","Your shop,")}<br/>
                 <span style={{
                   background:"linear-gradient(90deg,#d4a437,#f0c84a)",
                   WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent"
-                }}>sempre sotto controllo.</span>
+                }}>{tl("sempre sotto controllo.","always under control.")}</span>
               </div>
               <div className="text-[12px] text-[#7B6B5A] mt-2 font-mono">
                 Via Padova 104 · Milano
               </div>
             </div>
             <div className="flex flex-col gap-1.5 text-right">
-              {["✓ Corrispettivi AE","✓ IVA 4·10·22%","✓ Satispay & Buoni Pasto"].map(t=>(
-                <div key={t} className="text-[10px] font-mono text-[#7B6B5A] tracking-wide">{t}</div>
+              {[
+                tl("✓ Corrispettivi AE","✓ Daily Tax Summary"),
+                "✓ IVA 4·10·22%",
+                tl("✓ Satispay & Buoni Pasto","✓ Satispay & Meal Vouchers"),
+              ].map(item=>(
+                <div key={item} className="text-[10px] font-mono text-[#7B6B5A] tracking-wide">{item}</div>
               ))}
             </div>
           </div>
@@ -331,28 +337,28 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
             {/* Heading */}
             <div className="lp-a1 mb-8">
               <div className="text-[10px] uppercase tracking-[0.28em] font-mono text-[#d4a437] mb-2">
-                Accesso Negozio
+                {tl("Accesso Negozio","Shop Login")}
               </div>
               <h1 style={{fontFamily:"'Fraunces',serif", fontWeight:400}}
                 className="text-[30px] text-[#F5F0E8] tracking-tight leading-tight">
-                Bentornato
+                {tl("Bentornato","Welcome Back")}
               </h1>
               <p className="text-[12px] text-[#8B7B6A] mt-1.5 font-mono">
-                Inserisci le credenziali per accedere
+                {tl("Inserisci le credenziali per accedere","Enter your credentials to log in")}
               </p>
             </div>
 
             {/* Username */}
             <div className="lp-a2 mb-4">
               <label className="block text-[10px] uppercase tracking-[0.18em] font-mono text-[#9B8B7A] font-semibold mb-1.5">
-                Utente
+                {tl("Utente","Username")}
               </label>
               <input
                 type="text"
                 value={user}
                 onChange={e => setUser(e.target.value)}
                 className="w-full px-4 py-3 text-[13px] font-mono bg-[#161410] border border-[#2A2520] text-[#F5F0E8] focus:outline-none focus:border-[#d4a437] transition-colors"
-                placeholder="nome utente"
+                placeholder={tl("nome utente","username")}
                 required
               />
             </div>
@@ -398,18 +404,18 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
                 {loading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-[#6B5B4A] border-t-transparent rounded-full animate-spin"/>
-                    Accesso in corso...
+                    {tl("Accesso in corso...","Signing in...")}
                   </>
                 ) : (
                   <>
-                    Accedi al Negozio
+                    {tl("Accedi al Negozio","Enter Shop")}
                     <ArrowRight className="w-4 h-4"/>
                   </>
                 )}
               </button>
 
               <div className="mt-4 text-center text-[10px] font-mono text-[#6B5B4A] tracking-wide">
-                Accesso diretto · nessuna registrazione richiesta
+                {tl("Accesso diretto · nessuna registrazione richiesta","Direct access · no registration required")}
               </div>
             </div>
           </form>
@@ -418,7 +424,7 @@ export default function Landing({ onEnter, lang = "bilingual", setLang = () => {
           <div className="absolute bottom-8 left-0 right-0 px-10 lg:px-12">
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"/>
-              <span className="text-[10px] font-mono text-[#6B5B4A]">Sistema operativo · v1.0</span>
+              <span className="text-[10px] font-mono text-[#6B5B4A]">{tl("Sistema operativo · v1.0","System running · v1.0")}</span>
             </div>
           </div>
         </div>
